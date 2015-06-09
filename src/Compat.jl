@@ -302,12 +302,25 @@ function _compat(ex::Expr)
             end
         end
     end
+    _compat_base_module!(ex, :Markdown, v"0.4-dev")
+    _compat_base_module!(ex, :Dates, v"0.4-dev")
+
     return Expr(ex.head, map(_compat, ex.args)...)
 end
 _compat(ex) = ex
 
 macro compat(ex)
     esc(_compat(ex))
+end
+
+function _compat_base_module!(ex, m::Symbol, v::VersionNumber)
+    if ex.head in (:using, :import) && length(ex.args) > 1 && ex.args[1] == :Base && ex.args[2] == m
+        if VERSION < v
+            ex.args = ex.args[2:end]
+            return true
+        end
+    end
+    false
 end
 
 export @compat, @inline, @noinline

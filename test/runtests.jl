@@ -222,6 +222,12 @@ Compat.unsafe_convert(::Ptr{A}, x) = x
 # Test Ptr{T}(0)
 @test @compat(Ptr{Int}(0)) == C_NULL
 
+# Test using Base. modules
+@compat import Markdown: Table
+@compat using Markdown
+@compat import Dates: Day
+@compat using Dates
+
 # Test Tuple{} syntax
 if VERSION < v"0.4.0-dev+4319"
     @test @compat Tuple{1} == (1,)
